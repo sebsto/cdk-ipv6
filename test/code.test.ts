@@ -1,5 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
-import * as Code from '../lib/code-stack';
+import * as Code from '../lib/network-stack';
 
 test('Empty Stack', () => {
     const app = new cdk.App();

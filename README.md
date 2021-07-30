@@ -1,8 +1,6 @@
-# Welcome to your CDK TypeScript project!
+# CDK IPv6
 
-This is a blank project for TypeScript development with CDK.
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+This is a sample CDK script to deploy an IPv6 VPC.
 
 ## Useful commands
 
