@@ -7,9 +7,13 @@ export class NetworkStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // the network for our cluster 
+    // an IPv6 enabled VPC 
     const vpc = new IPv6Vpc(this, 'IPv6Demo', {
+
+      // technically, the NAT gateway is not used with IPv6 but VPC constructs complains when
+      // using PRIVATE subnets without NAT gateway :-(
       natGateways: 1, //this is the default value but I prefer to make it explicit
+
       maxAzs: 2,
       cidr: '10.0.0.0/16',
       subnetConfiguration: [{
@@ -50,6 +54,7 @@ class IPv6Vpc extends ec2.Vpc {
 
     const allSubnets = [...this.publicSubnets, ...this.privateSubnets, ...this.isolatedSubnets];
 
+    // associate an IPv6 block to each subnets
     allSubnets.forEach((subnet, i) => {
       const cidr6 = Fn.select(i, subnet6cidrs);
 
@@ -58,6 +63,7 @@ class IPv6Vpc extends ec2.Vpc {
       subnet.node.addDependency(ip6cidr);
     });
 
+    // for public subnets, ensure there is one IPv6 Internet Gateway
     if (this.publicSubnets) {
       let igwId = this.internetGatewayId;
       if (!igwId) {
@@ -70,6 +76,7 @@ class IPv6Vpc extends ec2.Vpc {
         });
       }
 
+      // and that each subnet has a routing table to the Internet Gateway
       this.publicSubnets.forEach(subnet => {
         const s = subnet as ec2.PublicSubnet;
         s.addRoute('DefaultRoute6', {
@@ -81,11 +88,13 @@ class IPv6Vpc extends ec2.Vpc {
       });
     }
 
+    // for private subnet, ensure there is an IPv6 egress gateway
     if (this.privateSubnets) {
       const eigw = new ec2.CfnEgressOnlyInternetGateway(this, 'EIGW6', {
         vpcId: this.vpcId,
       });
 
+      // and attach a routing table to the egress gateway
       // Yay firewalling by routing side effect :(
       this.privateSubnets.forEach(subnet => {
         const s = subnet as ec2.PrivateSubnet;
