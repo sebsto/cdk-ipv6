@@ -66,7 +66,8 @@ class IPv6Vpc extends ec2.Vpc {
 
       const cfnSubnet = subnet.node.defaultChild as ec2.CfnSubnet;
       cfnSubnet.ipv6CidrBlock = cidr6;
-      cfnSubnet.assignIpv6AddressOnCreation = true;  // NB: EKS-ipv6 requires this
+      // cfnSubnet.assignIpv6AddressOnCreation = true;  // NB: EKS-ipv6 requires this
+      // delete cfnSubnet.mapPublicIpOnLaunch;
       subnet.node.addDependency(ip6cidr);
     });
 
