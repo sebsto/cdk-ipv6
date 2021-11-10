@@ -10,3 +10,7 @@ This is a sample CDK script to deploy an IPv6 VPC.
  * `cdk deploy`      deploy this stack to your default AWS account/region
  * `cdk diff`        compare deployed stack with current state
  * `cdk synth`       emits the synthesized CloudFormation template
+
+## Contributions 
+
+[Angus Lees](https://www.linkedin.com/in/guslees/) is the original author of this code. Thank you !
