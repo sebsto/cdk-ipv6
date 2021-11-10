@@ -1,4 +1,4 @@
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 
 import { aws_ec2 as ec2, Fn, Tags } from 'aws-cdk-lib';
@@ -30,6 +30,12 @@ export class NetworkStack extends Stack {
         cidrMask: 24
       }]
     });
+
+    // output all public subnet IDs for convenience
+    vpc.publicSubnets.forEach( (subnet, i) => {
+      new CfnOutput(this, `Frontend subnets ${i}`, { value: subnet.subnetId });
+    });
+    
   }
 }
 
